@@ -1,6 +1,6 @@
 ###
 #Author:Docvx
-#Version:0.1
+#Version:0.2
 ###
 
 echo "nice to see you again!"
@@ -14,6 +14,7 @@ workspace="/Ahome/code"
 ACODE=$HOME$workspace
 HTTP_PROXY="" 
 HTTPS_PROXY=""
+HTTP_PROXY_PORT="7890"
 
 #modules
 #about all >>>
@@ -27,11 +28,17 @@ function lsmods(){
 }
 function ls-linux(){
 	echo "linux module:"
-	echo "set-proxy (clash)"
-	echo "unset-proxy(clash)"
+	echo "set-proxy"
+	echo "unset-proxy"
+	echo "show-proxy"
+	echo "set-proxy-hotpot 192.168.<param1>.1"
+	echo "set-proxy-neighber 192.168.<param1>.<param2>"
 	echo "is-net"
 	echo "aenv <command> (get the environment variables of <command>)"
+	echo "aenv-proxy <command>"
 	echo "aget <package>(apt install <package>)"
+	echo "curl-http-proxy <other params>"
+	echo "curl-sudo-http-proxy <other params>"
 }
 function ls-rust(){
 	echo "rust module:"
@@ -86,24 +93,31 @@ function show-proxy(){
 	echo "https: "$HTTPS_PROXY
 }
 function set-proxy(){
-	proxyString="http://127.0.0.1:7890"
+	proxyString="http://127.0.0.1:"$HTTP_PROXY_PORT
 	HTTP_PROXY=$proxyString
 	HTTPS_PROXY=$proxyString
 }
 function set-proxy-hotpot(){
-    proxyString="http://192.168."$1".1:7890"
+    proxyString="http://192.168."$1".1:"$HTTP_PROXY_PORT
 	HTTP_PROXY=$proxyString
 	HTTPS_PROXY=$proxyString
+}
+function set-proxy-neighbor(){
+      proxyString="http://192.168."$1.$2":"$HTTP_PROXY_PORT
+        HTTP_PROXY=$proxyString
+        HTTPS_PROXY=$proxyString
+
 }
 function unset-proxy(){
 	HTTP_PROXY="" 
 	HTTPS_PROXY=""
 }
 function aenv(){
-	ps -C $1|sed '1d'|awk -F ' ' '{print system("cat /proc/"$1"/environ");}' 
+        ps -C $1|sed '1d'|awk -F ' ' '{print system("cat /proc/"$1"/environ");}' 
 }
 function aenv-proxy(){
-	aenvs=`ps -C $1|sed '1d'|awk -F ' ' '{print system("cat /proc/"$1"/environ");}'`
+#	aenvs=`ps -C $1|sed '1d'|awk -F ' ' '{print system("cat /proc/"$1"/environ");}'`
+	aenvs=`aenv $1`
 	aproxy1=`echo $aenvs|grep -oP "(?<=(?:HTTP_PROXY=)).{0,50}(?=(?:,))"`
 	aproxy2=`echo $aenvs|grep -oP "(?<=(?:HTTPS_PROXY=)).{0,50}(?=(?:,))"`
 	aproxy3=`echo $aenvs|grep -oP "(?<=(?:http_proxy=http://)).{0,30}(?=(?:/))"`
@@ -115,6 +129,12 @@ function aenv-proxy(){
 }
 function aget(){
 	sudo apt install -y $1
+}
+function curl-http-proxy(){
+	curl --proxy $HTTP_PROXY $@
+}
+function curl-sudo-http-proxy(){
+	sudo curl $@ --proxy "http://192.168.1.21:7890" 
 }
 #linux<<<
 #about rust >>>
