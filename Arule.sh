@@ -173,11 +173,7 @@ function ct-ai(){
 
 #about git >>>
 function git-proxy-on-http(){
-	git config --global http.https://github.com.proxy http://127.0.0.1:7890
-}
-function git-proxy-on-socks(){
-	git config --global http.https://github.com.proxy socks5://127.0.0.1:1080
-
+	git config --global http.https://github.com.proxy $HTTP_PROXY
 }
 function git-proxy-off(){
 	git config --global --unset http.https://github.com.proxy
