@@ -134,7 +134,8 @@ function curl-http-proxy(){
 	curl --proxy $HTTP_PROXY $@
 }
 function curl-sudo-http-proxy(){
-	sudo curl $@ --proxy "http://192.168.1.21:7890" 
+#example: sudo curl $@ --proxy "http://127.0.0.1:7890" 
+	sudo curl $@ --proxy "<your path>"
 }
 #linux<<<
 #about rust >>>
